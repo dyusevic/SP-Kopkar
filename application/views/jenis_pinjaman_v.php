@@ -2,7 +2,6 @@
 <link href="<?php echo base_url(); ?>assets/asset/javascript/datatable/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
 <link href="<?php echo base_url(); ?>assets/asset/javascript/datatable/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
 
-
 <?php
 // buaat tanggal sekarang
 $tanggal = date('Y-m-d H:i');
@@ -112,6 +111,44 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
                       ?>
                     </select>
                   </div>
+					<div class="form-group">
+                    <label for="COAPB" class="col-form-label">Chart Of Account PB</label><br>
+                    <select type="text" class="form-control" id="coapb" name="coapb" style="height: 20%;" required="required">
+                      <option value="">-----Pilih COA PB-----</option>
+                      <?php
+                      foreach ($coa as $codepb) {
+                        if($codepb->vcCOACode == $jpinjam->COAPB){
+                          ?>
+                          <option selected="selected" value="<?php echo $codepb->vcCOACode?>"><?php echo $codepb->vcCOAName?></option>
+                          <?php
+                        }else{
+                          ?>
+                          <option value="<?php echo $codepb->vcCOACode?>"><?php echo $codepb->vcCOAName?></option>
+                          <?php
+                        }
+                      }
+                      ?>
+                    </select>
+                  </div>
+				  <div class="form-group">
+                    <label for="COABA" class="col-form-label">Chart Of Account BA</label><br>
+                    <select type="text" class="form-control" id="coaba" name="coaba" style="height: 20%;" required="required">
+                      <option value="">-----Pilih COA BA-----</option>
+                      <?php
+                      foreach ($coa as $codeba) {
+                        if($codeba->vcCOACode == $jpinjam->COABA){
+                          ?>
+                          <option selected="selected" value="<?php echo $codeba->vcCOACode?>"><?php echo $codeba->vcCOAName?></option>
+                          <?php
+                        }else{
+                          ?>
+                          <option value="<?php echo $codeba->vcCOACode?>"><?php echo $codeba->vcCOAName?></option>
+                          <?php
+                        }
+                      }
+                      ?>
+                    </select>
+                  </div>
                   <div class="form-group">
                     <label for="recipient-name" class="col-form-label">Status</label><br>
                     <select type="text" class="form-control" id="tampil" name="tampil" style="height: 20%;" required="required">
@@ -160,6 +197,10 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
       </div>
       <form action="<?php echo site_url('jenis_pinjaman/post_jenis_pinjam')?>" method="post">
         <div class="modal-body">
+		<div class="form-group">
+            <label for="recipient-name" class="col-form-label">Kode Jenis Pinjaman</label>
+            <input type="text" class="form-control" id="kd_jns_pinjam" name="kd_jns_pinjam" style="height: 20%;" required="required" placeholder="Gunakan Huruf Besar, maximal 3 karakter" onChange="javascript:{this.value = this.value.toUpperCase();}" maxlength="3">
+          </div>
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Jenis Pinjaman</label>
             <input type="text" class="form-control" id="jns_pinjam" name="jns_pinjam" style="height: 20%;" required="required" value="" maxlength="30">
@@ -177,6 +218,36 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
               ?>
             </select>
           </div>
+		  <!--add-on by ysf (2019-07-11)-->
+			<div class="form-group">
+            <label for="coaPB class="col-form-label">Chart Of Account PB</label><br>
+            <select type="text" class="form-control" id="coapb" name="coapb" style="height: 20%;" required="required">
+              <option value="">-----Pilih COAPB-----</option>
+              <?php
+              foreach ($coa as $code) {
+                ?>
+                <option value="<?php echo $code->vcCOACode?>"><?php echo $code->vcCOAName?></option>
+                <?php
+              }
+              ?>
+            </select>
+			</div>
+		  <!-- end of add-on -->
+		  <!--add-on by ysf (2019-07-11)-->
+			<div class="form-group">
+            <label for="coaPB class="col-form-label">Chart Of Account BA</label><br>
+            <select type="text" class="form-control" id="coaba" name="coaba" style="height: 20%;" required="required">
+              <option value="">-----Pilih COAPB-----</option>
+              <?php
+              foreach ($coa as $code) {
+                ?>
+                <option value="<?php echo $code->vcCOACode?>"><?php echo $code->vcCOAName?></option>
+                <?php
+              }
+              ?>
+            </select>
+			</div>
+		  <!-- end of add-on -->
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Status</label><br>
             <select type="text" class="form-control" id="tampil" name="tampil" style="height: 20%;" required="required">

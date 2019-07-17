@@ -799,4 +799,39 @@ class Pinjaman_m extends CI_Model {
 		// $this->db->where("$postData['masa_kerja'] <= masa_kerja_max");
 		// return $this->db->get('jns_angsuran')->result_array();
 	}
+	
+	//add-on by:ysf (2019/07/10)
+	// ambil data header by id header
+	public function get_data_header($IDPinjaman){
+		$this->db->limit('1');
+		$this->db->where('id', $IDPinjaman);
+		return $this->db->get('tbl_pinjaman_h');
+	}
+	// ambil data ar header
+	public function get_data_coa($IDPinjaman){
+		// $this->db->join('tbl_arheader C','C.vcARHeaderCode = H.vcARHeaderCode','LEFT');
+		//$this->db->join('jns_pinjam C','C.vcCOACode = H.vcCOAARItemCode','LEFT');
+		$this->db->join('jns_pinjam C','C.id = H.jns_pinjam','LEFT');
+		//$this->db->where('H.vcARHeaderCode', $vcARHeaderCode);
+		$this->db->where('H.id', $IDPinjaman);
+		$this->db->order_by('H.id','DESC');
+		return $this->db->get('tbl_pinjaman_h H');
+	}
+	public function get_data_kas_by_id($IDPinjaman){
+		$this->db->join('nama_kas_tbl K','K.id = H.kas_id','LEFT');
+		//$this->db->where('H.vcARHeaderCode', $vcARHeaderCode);
+		$this->db->where('H.id', $IDPinjaman);
+		$this->db->order_by('H.id','DESC');
+		return $this->db->get('tbl_pinjaman_h H');
+	}
+	public function update_status_posting($IDPinjaman) {
+		$this->db->where('id', $IDPinjaman);
+		return $this->db->update('tbl_pinjaman_h',array('itPostPinjam'=>'1'));
+	}
+	public function update_status_unposting($IDPinjaman) {
+		$this->db->where('no_pinjaman', $IDPinjaman);
+		return $this->db->update('tbl_pinjaman_h',array('itPostPinjam'=>'0'));
+	}
+	//end of add-on
+	
 }

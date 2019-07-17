@@ -32,7 +32,9 @@ class Jenis_pinjaman_m extends CI_Model {
 	// ambil dataj
 	public function get_data_jpinjam(){
 		$this->db->order_by('id', 'DESC');
-		$this->db->join('tbl_coa C','C.vcCOACode = J.vcCOACode');
+		$this->db->join('tbl_coa C','C.vcCOACode = J.vcCOACode','C.vcCOACode = J.COAPB','C.vcCOACode = J.COABA');
+		//$this->db->join('tbl_coa C','C.vcCOACode = J.COAPB');
+		//$this->db->join('tbl_coa C','C.vcCOACode = J.COABA');
 		return $this->db->get('jns_pinjam J');
 	}
 

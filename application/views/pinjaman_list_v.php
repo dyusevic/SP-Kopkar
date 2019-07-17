@@ -72,7 +72,7 @@ striped="true">
 		<th data-options="field:'user', width:'15', halign:'center', align:'center'">User </th>
 		<th data-options="field:'ket', width:'15', halign:'center', align:'left'" hidden="true">Keterangan</th>
 		<th data-options="field:'kas_id', halign:'center', align:'right'" hidden="true"> Kas</th>
-		<th data-options="field:'detail', halign:'center', align:'right'">Aksi</th>
+		<th data-options="field:'detail', halign:'center', align:'center'">Aksi</th>
 	</tr>
 </thead>
 </table>

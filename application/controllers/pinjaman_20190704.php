@@ -119,8 +119,7 @@ class Pinjaman extends OperatorController {
 			}
 
 			$rows[$i]['id'] = $r->id;
-			//$rows[$i]['id_txt'] = sprintf('%03d', $r->id).'/'.$barang->kode.'/'.date('m',strtotime($r->tgl_pinjam)).'/'.date('y',strtotime($r->tgl_pinjam));
-			$rows[$i]['id_txt'] = $r->nopinjam;
+			$rows[$i]['id_txt'] = sprintf('%03d', $r->id).'/'.$barang->kode.'/'.date('m',strtotime($r->tgl_pinjam)).'/'.date('y',strtotime($r->tgl_pinjam));
 			$rows[$i]['tgl_pinjam'] = $r->tgl_pinjam;
 			$rows[$i]['tgl_pinjam_txt'] = $txt_tanggal;
 			$rows[$i]['anggota_id'] = $r->anggota_id;
@@ -207,22 +206,18 @@ class Pinjaman extends OperatorController {
 			$rows[$i]['user'] = $r->user_name;
 			$rows[$i]['ket'] = $r->keterangan;
 			$rows[$i]['kas_id'] = $r->kas_id;
-			if($r->posting==0){
-				$rows[$i]['detail']='<a href="'.site_url('angsuran_detail').'/index/' . $r->id . '" title="Detail"> <i class="fa fa-search"></i> Detail </a>
-				&nbsp;<a href="'.site_url('pinjaman').'/posting_pinjaman_header/' . $r->id . '"  title="Posting"> <i class="fa fa-repeat"></i> Posting </a>
-				&nbsp;<a href="'.site_url('cetak_pinjaman').'/cetak/' . $r->id . '"  title="Cetak Bukti Transaksi" target="_blank"> <i class="glyphicon glyphicon-print"></i> Nota </a>';
-			}else{
-				$rows[$i]['detail']='<a href="'.site_url('angsuran_detail').'/index/' . $r->id . '" title="Detail"> <i class="fa fa-search"></i> Detail </a>
-				&nbsp;<a href="'.site_url('pinjaman').'/unposting_pinjaman_header/' . $r->nopinjam . '"  title="Un-Posting"> <i class="fa fa-undo"></i> Un-Posting </a>
-				&nbsp;<a href="'.site_url('cetak_pinjaman').'/cetak/' . $r->id . '"  title="Cetak Bukti Transaksi" target="_blank"> <i class="glyphicon glyphicon-print"></i> Nota </a>';
-			}
+			$rows[$i]['detail'] ='<a href="'.site_url('angsuran_detail').'/index/' . $r->id . '" title="Detail"> <i class="fa fa-search"></i> Detail </a>
+				&nbsp;
+				<a href="'.site_url('cetak_pinjaman').'/cetak/' . $r->id . '"  title="Posting" target="_blank"> <i class="glyphicon glyphicon-share"></i> Posting </a>
+				&nbsp;
+				<a href="'.site_url('cetak_pinjaman').'/cetak/' . $r->id . '"  title="Cetak Bukti Transaksi" target="_blank"> <i class="glyphicon glyphicon-print"></i> Nota </a>';
 			$i++;
 		}
 	//keys total & rows wajib bagi jEasyUI
 	$result = array('total'=>$data['count'],'rows'=>$rows);
 	echo json_encode($result); //return nya json
 	}
-	
+
 	function get_jenis_barang() {
 		$id = $this->input->post('barang_id');
 		$jenis_barang = $this->pinjaman_m->get_id_barang();
@@ -287,95 +282,4 @@ class Pinjaman extends OperatorController {
     	$data = $this->pinjaman_m->get_lama_angsuran($postData);
     	echo json_encode($data);
 	}
-	
-	//add-on by:ysf(2019-07-04)
-	public function posting_pinjaman_header($IDPinjaman){
-		$data = array(
-			'itPostPinjam' => '1',
-		);
-		// ambil data pinjaman dan coa
-		$data_header 	= $this->pinjaman_m->get_data_header($IDPinjaman)->row();
-		//$data_coa 		= $this->pinjaman_m->get_data_coa($IDPinjaman->vcCOACode)->result();
-		$data_coa 		= $this->pinjaman_m->get_data_coa($IDPinjaman)->row();
-		$data_kas 		= $this->pinjaman_m->get_data_kas_by_id($IDPinjaman)->row();
-		$this->db->trans_start();
-		$jumlahdebet=$data_header->jumlah+($data_header->jumlah*$data_header->bunga/100)+$data_header->biaya_adm;
-		$bungapinjaman=$data_header->jumlah*$data_header->bunga/100;
-		$biayaadmin=$data_header->biaya_adm;
-		// data debet
-		$insert_header = array(
-			'vcIDJournal' 		=> $data_header->no_pinjaman,
-			'dtJournal'			=> date("Y-m-d H:i:s"),
-			'vcCOAJournal'		=> $data_coa->vcCOACode,
-			'cuJournalDebet' 	=> $jumlahdebet,
-			'vcJournalDesc'		=> $data_coa->jns_pinjam,
-			'itPostJournal'		=> '1',
-			'vcUserID'			=> 'Admin'
-		);
-		$this->db->insert('tbl_journal', $insert_header);
-		// data kredit (BUNGA PINJAMAN)
-		$insert_header = array(
-			'vcIDJournal' 		=> $data_header->no_pinjaman,
-			'dtJournal'			=> date("Y-m-d H:i:s"),
-			'vcCOAJournal'		=> $data_coa->COAPB,
-			'cuJournalCredit' 	=> $bungapinjaman,
-			'vcJournalDesc'		=> "Bunga Pinjaman",
-			'itPostJournal'		=> '1',
-			'vcUserID'			=> 'Admin'
-		);
-		$this->db->insert('tbl_journal', $insert_header);
-		// data kredit (BIAYA ADMIN)
-		$insert_header = array(
-			'vcIDJournal' 		=> $data_header->no_pinjaman,
-			'dtJournal'			=> date("Y-m-d H:i:s"),
-			'vcCOAJournal'		=> $data_coa->COABA,
-			'cuJournalCredit' 	=> $biayaadmin,
-			'vcJournalDesc'		=> "Biaya Admin",
-			'itPostJournal'		=> '1',
-			'vcUserID'			=> 'Admin'
-		);
-		$this->db->insert('tbl_journal', $insert_header);
-		// data kredit (KAS)
-		$insert_header = array(
-			'vcIDJournal' 		=> $data_header->no_pinjaman,
-			'dtJournal'			=> date("Y-m-d H:i:s"),
-			'vcCOAJournal'		=> $data_kas->vcCOACode,
-			'cuJournalCredit' 	=> $data_header->jumlah,
-			'vcJournalDesc'		=> $data_kas->nama,
-			'itPostJournal'		=> '1',
-			'vcUserID'			=> 'Admin'
-		);
-		$this->db->insert('tbl_journal', $insert_header);
-		// update tbl_pinjaman
-		$this->pinjaman_m->update_status_posting($IDPinjaman);
-		if ($this->db->trans_status() === FALSE) {
-			$this->db->trans_rollback();
-			$this->session->set_flashdata('error','Mohon maaf data gagal diposting.');
-			redirect_back();
-			return FALSE;
-		} else {
-			$this->db->trans_complete();
-			$this->session->set_flashdata('sukses','Selamat, Data berhasil diposting.');
-			redirect_back();
-			return TRUE;
-		}
-	}
-	public function unposting_pinjaman_header($IDPinjaman){
-		$this->db->trans_start();
-		// TRANSACTIONAL DB START
-		$this->db->delete('tbl_journal', array('vcIDJournal' => $IDPinjaman));
-		$this->pinjaman_m->update_status_unposting($IDPinjaman);
-		if ($this->db->trans_status() === FALSE) {
-			$this->db->trans_rollback();
-			$this->session->set_flashdata('error','Mohon maaf data gagal diposting.');
-			redirect_back();
-			return FALSE;
-		} else {
-			$this->db->trans_complete();
-			$this->session->set_flashdata('sukses','Selamat, Data berhasil diposting.');
-			redirect_back();
-			return TRUE;
-		}
-	}
-	//end of add-on
-	};
+}

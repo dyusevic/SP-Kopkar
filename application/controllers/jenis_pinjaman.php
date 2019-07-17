@@ -20,8 +20,11 @@ class Jenis_pinjaman extends AdminController {
 	}
 
 	public function post_jenis_pinjam(){
+		$this->form_validation->set_rules('kd_jns_pinjam', 'kd_jns_pinjam', 'required');
 		$this->form_validation->set_rules('jns_pinjam', 'jns_pinjam', 'required');
 		$this->form_validation->set_rules('vcCOACode', 'vcCOACode', 'required');
+		$this->form_validation->set_rules('coapb', 'coapb', 'required');
+		$this->form_validation->set_rules('coaba', 'coaba', 'required');
 		$this->form_validation->set_rules('tampil', 'tampil', 'required');
 
 		if($this->form_validation->run() == FALSE){
@@ -29,10 +32,12 @@ class Jenis_pinjaman extends AdminController {
 			redirect_back();
 		}else{
 			$data = array(
-				'jns_pinjam' 	=> $this->input->post('jns_pinjam'),
-				'vcCOACode' 	=> $this->input->post('vcCOACode'),
-				'tampil' 		=> $this->input->post('tampil'),
-
+				'kode_jenis_pinjam'=> $this->input->post('kd_jns_pinjam'),
+				'jns_pinjam'=> $this->input->post('jns_pinjam'),
+				'vcCOACode' => $this->input->post('vcCOACode'),
+				'tampil' 	=> $this->input->post('tampil'),
+				'COAPB'		=> $this->input->post('coapb'),
+				'COABA'		=> $this->input->post('coaba'),
 			);
 
 			if($this->jenis_pinjaman_m->insert($data)){
@@ -47,7 +52,7 @@ class Jenis_pinjaman extends AdminController {
 
 	public function post_update_jenis_pinjaman(){
 		$this->form_validation->set_rules('jns_pinjam', 'jns_pinjam', 'required');
-		$this->form_validation->set_rules('vcCOACode', 'vcCOACode', 'required');
+		$this->form_validation->set_rules('vcCOACode', 'vcCOACode','coapb','coaba', 'required');
 		$this->form_validation->set_rules('tampil','tampila', 'required');
 		$this->form_validation->set_rules('id','ID', 'required');
 
@@ -56,9 +61,11 @@ class Jenis_pinjaman extends AdminController {
 			redirect_back();
 		}else{
 			$data = array(
-				'jns_pinjam' 		=> $this->input->post('jns_pinjam'),
-				'vcCOACode' 		=> $this->input->post('vcCOACode'),
-				'tampil' 	    	=> $this->input->post('tampil'),
+				'jns_pinjam' 	=> $this->input->post('jns_pinjam'),
+				'vcCOACode' 	=> $this->input->post('vcCOACode'),
+				'tampil' 	    => $this->input->post('tampil'),
+				'COAPB'		=> $this->input->post('coapb'),
+				'COABA'		=> $this->input->post('coaba'),
 
 			);
 			$id = $this->input->post('id');
