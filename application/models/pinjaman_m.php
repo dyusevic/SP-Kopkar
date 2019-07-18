@@ -809,17 +809,13 @@ class Pinjaman_m extends CI_Model {
 	}
 	// ambil data ar header
 	public function get_data_coa($IDPinjaman){
-		// $this->db->join('tbl_arheader C','C.vcARHeaderCode = H.vcARHeaderCode','LEFT');
-		//$this->db->join('jns_pinjam C','C.vcCOACode = H.vcCOAARItemCode','LEFT');
 		$this->db->join('jns_pinjam C','C.id = H.jns_pinjam','LEFT');
-		//$this->db->where('H.vcARHeaderCode', $vcARHeaderCode);
 		$this->db->where('H.id', $IDPinjaman);
 		$this->db->order_by('H.id','DESC');
 		return $this->db->get('tbl_pinjaman_h H');
 	}
 	public function get_data_kas_by_id($IDPinjaman){
 		$this->db->join('nama_kas_tbl K','K.id = H.kas_id','LEFT');
-		//$this->db->where('H.vcARHeaderCode', $vcARHeaderCode);
 		$this->db->where('H.id', $IDPinjaman);
 		$this->db->order_by('H.id','DESC');
 		return $this->db->get('tbl_pinjaman_h H');
