@@ -20,24 +20,29 @@ class Jenis_pinjaman extends AdminController {
 	}
 
 	public function post_jenis_pinjam(){
-		$this->form_validation->set_rules('kd_jns_pinjam', 'kd_jns_pinjam', 'required');
-		$this->form_validation->set_rules('jns_pinjam', 'jns_pinjam', 'required');
-		$this->form_validation->set_rules('vcCOACode', 'vcCOACode', 'required');
-		$this->form_validation->set_rules('coapb', 'coapb', 'required');
-		$this->form_validation->set_rules('coaba', 'coaba', 'required');
-		$this->form_validation->set_rules('tampil', 'tampil', 'required');
+		$this->form_validation->set_rules('kd_jns_pinjam2', 'kd_jns_pinjam2', 'required');
+		$this->form_validation->set_rules('jns_pinjam2', 'jns_pinjam2', 'required');
+		$this->form_validation->set_rules('vcCOACode2', 'vcCOACode2', 'required');
+		$this->form_validation->set_rules('coapb2', 'coapb2', 'required');
+		$this->form_validation->set_rules('coaba2', 'coaba2', 'required');
+		$this->form_validation->set_rules('coada2', 'coada2', 'required');
+		$this->form_validation->set_rules('tampil2', 'tampil2', 'required');
 
 		if($this->form_validation->run() == FALSE){
 			$this->session->set_flashdata('error','Mohon maaf data gagal disimpan, Silahkan lengkapi pengisian data.');
 			redirect_back();
 		}else{
 			$data = array(
-				'kode_jenis_pinjam'=> $this->input->post('kd_jns_pinjam'),
-				'jns_pinjam'=> $this->input->post('jns_pinjam'),
-				'vcCOACode' => $this->input->post('vcCOACode'),
-				'tampil' 	=> $this->input->post('tampil'),
-				'COAPB'		=> $this->input->post('coapb'),
-				'COABA'		=> $this->input->post('coaba'),
+				'kode_jenis_pinjam'=> $this->input->post('kd_jns_pinjam2'),
+				'jns_pinjam'=> $this->input->post('jns_pinjam2'),
+				'vcCOACode' => $this->input->post('vcCOACode2'),
+				'tampil' 	=> $this->input->post('tampil2'),
+				'COAPB'		=> $this->input->post('coapb2'),
+				'namaCOAPB' => $this->input->post('namacoapb2'),
+				'COABA'		=> $this->input->post('coaba2'),
+				'namaCOABA'	=> $this->input->post('namacoaba2'),
+				'COADA'		=> $this->input->post('coada2'),
+				'namaCOADA'	=> $this->input->post('namacoada2'),
 			);
 
 			if($this->jenis_pinjaman_m->insert($data)){
@@ -65,8 +70,11 @@ class Jenis_pinjaman extends AdminController {
 				'vcCOACode' 	=> $this->input->post('vcCOACode'),
 				'tampil' 	    => $this->input->post('tampil'),
 				'COAPB'		=> $this->input->post('coapb'),
+				'namaCOAPB' => $this->input->post('namacoapb'),
 				'COABA'		=> $this->input->post('coaba'),
-
+				'namaCOABA'	=> $this->input->post('namacoaba'),
+				'COADA'		=> $this->input->post('coada'),
+				'namaCOADA'	=> $this->input->post('namacoada'),
 			);
 			$id = $this->input->post('id');
 			if($this->jenis_pinjaman_m->update($id, $data)){
@@ -88,5 +96,4 @@ class Jenis_pinjaman extends AdminController {
 			redirect_back();
 		}
 	}
-
 }

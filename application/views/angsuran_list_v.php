@@ -217,6 +217,7 @@ striped="true">
 		<th data-options="field:'user', width:'20', halign:'center', align:'center'"> User Name</th>
 		<th data-options="field:'ket', width:'15', halign:'center', align:'left'" hidden="true">Keterangan</th>
 		<th data-options="field:'nota', width:'10', halign:'center', align:'center'"> Cetak</th>
+		<th data-options="field:'posting', width:'10', halign:'center', align:'center'"> Posting</th>
 	</tr>
 </thead>
 </table>

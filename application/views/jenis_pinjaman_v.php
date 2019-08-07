@@ -45,6 +45,9 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
         <th class="text-center">No</th>
         <th class="text-center">Jenis Pinjaman</th>
         <th class="text-center">Chart Of Account</th>
+		<th class="text-center">Chart Of Account Biaya Administrasi</th>
+		<th class="text-center">Chart Of Account Bunga Pinjaman</th>
+		<th class="text-center">Chart Of Account Denda</th>
         <th class="text-center">Status</th>
         <th class="text-center">Aksi</th>
 
@@ -55,11 +58,15 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
       $i=0;
       foreach ($data_jpinjam as $jpinjam) {
         $i++;
+		//$coapb=$this->KodeCOA('00.10.10.120');
         ?>
         <tr>
           <td class="text-center"><?= $i;?></td>
-          <td class="text-center"><?php echo $jpinjam->jns_pinjam?></td>
-          <td class="text-left"><?php echo $jpinjam->vcCOAName?></td>
+          <td class="text-center"><?php echo $jpinjam->jns_pinjam;?></td>
+          <td class="text-left"><?php echo $jpinjam->vcCOAName;?></td>
+		  <td class="text-left"><?php echo $jpinjam->namaCOAPB;?></td>
+		  <td class="text-left"><?php echo $jpinjam->namaCOABA;?></td>
+		  <td class="text-left"><?php echo $jpinjam->namaCOADA;?></td>
           <td class="text-center">
             <?php
               if($jpinjam->tampil == 'Y'){
@@ -112,8 +119,8 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
                     </select>
                   </div>
 					<div class="form-group">
-                    <label for="COAPB" class="col-form-label">Chart Of Account PB</label><br>
-                    <select type="text" class="form-control" id="coapb" name="coapb" style="height: 20%;" required="required">
+                    <label for="COAPB" class="col-form-label">Chart Of Account BUNGA PINJAMAN</label><br>
+                    <select type="text" class="form-control" id="coapb" name="coapb" style="height: 20%;" required="required" onclick="editpilcoapb()">
                       <option value="">-----Pilih COA PB-----</option>
                       <?php
                       foreach ($coa as $codepb) {
@@ -129,10 +136,11 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
                       }
                       ?>
                     </select>
+					<input type="text" class="form-control" id="namacoapb" name="namacoapb">
                   </div>
 				  <div class="form-group">
-                    <label for="COABA" class="col-form-label">Chart Of Account BA</label><br>
-                    <select type="text" class="form-control" id="coaba" name="coaba" style="height: 20%;" required="required">
+                    <label for="COABA" class="col-form-label">Chart Of Account BIAYA ADMINISTRASI</label><br>
+                    <select type="text" class="form-control" id="coaba" name="coaba" style="height: 20%;" required="required" onclick="editpilcoaba()">
                       <option value="">-----Pilih COA BA-----</option>
                       <?php
                       foreach ($coa as $codeba) {
@@ -148,6 +156,27 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
                       }
                       ?>
                     </select>
+					<input type="text" class="form-control" id="namacoaba" name="namacoaba">
+                  </div>
+				  <div class="form-group">
+                    <label for="COADA" class="col-form-label">Chart Of Account DENDA</label><br>
+                    <select type="text" class="form-control" id="coada" name="coada" style="height: 20%;" required="required" onclick="editpilcoada()">
+                      <option value="">-----Pilih COA DA-----</option>
+                      <?php
+                      foreach ($coa as $codeda) {
+                        if($codeda->vcCOACode == $jpinjam->COADA){
+                          ?>
+                          <option selected="selected" value="<?php echo $codeda->vcCOACode?>"><?php echo $codeda->vcCOAName?></option>
+                          <?php
+                        }else{
+                          ?>
+                          <option value="<?php echo $codeda->vcCOACode?>"><?php echo $codeda->vcCOAName?></option>
+                          <?php
+                        }
+                      }
+                      ?>
+                    </select>
+					<input type="text" class="form-control" id="namacoada" name="namacoada">
                   </div>
                   <div class="form-group">
                     <label for="recipient-name" class="col-form-label">Status</label><br>
@@ -168,6 +197,7 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
                       ?>
                     </select>
                   </div>
+				  
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -199,15 +229,15 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
         <div class="modal-body">
 		<div class="form-group">
             <label for="recipient-name" class="col-form-label">Kode Jenis Pinjaman</label>
-            <input type="text" class="form-control" id="kd_jns_pinjam" name="kd_jns_pinjam" style="height: 20%;" required="required" placeholder="Gunakan Huruf Besar, maximal 3 karakter" onChange="javascript:{this.value = this.value.toUpperCase();}" maxlength="3">
+            <input type="text" class="form-control" id="kd_jns_pinjam2" name="kd_jns_pinjam2" style="height: 20%;" required="required" placeholder="Gunakan Huruf Besar, maximal 3 karakter" onChange="javascript:{this.value = this.value.toUpperCase();}" maxlength="3">
           </div>
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Jenis Pinjaman</label>
-            <input type="text" class="form-control" id="jns_pinjam" name="jns_pinjam" style="height: 20%;" required="required" value="" maxlength="30">
+            <input type="text" class="form-control" id="jns_pinjam2" name="jns_pinjam2" style="height: 20%;" required="required" value="" maxlength="30">
           </div>
           <div class="form-group">
             <label for="vcCOACode" class="col-form-label">Chart Of Account</label><br>
-            <select type="text" class="form-control" id="vcCOACode" name="vcCOACode" style="height: 20%;" required="required">
+            <select type="text" class="form-control" id="vcCOACode2" name="vcCOACode2" style="height: 20%;" required="required">
               <option value="">-----Pilih COA-----</option>
               <?php
               foreach ($coa as $code) {
@@ -221,7 +251,7 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
 		  <!--add-on by ysf (2019-07-11)-->
 			<div class="form-group">
             <label for="coaPB class="col-form-label">Chart Of Account PB</label><br>
-            <select type="text" class="form-control" id="coapb" name="coapb" style="height: 20%;" required="required">
+            <select type="text" class="form-control" id="coapb2" name="coapb2" style="height: 20%;" required="required" onclick="pilcoapb()">
               <option value="">-----Pilih COAPB-----</option>
               <?php
               foreach ($coa as $code) {
@@ -231,12 +261,13 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
               }
               ?>
             </select>
+			<input type="text" class="form-control" id="namacoapb2" name="namacoapb2">
 			</div>
 		  <!-- end of add-on -->
 		  <!--add-on by ysf (2019-07-11)-->
 			<div class="form-group">
             <label for="coaPB class="col-form-label">Chart Of Account BA</label><br>
-            <select type="text" class="form-control" id="coaba" name="coaba" style="height: 20%;" required="required">
+            <select type="text" class="form-control" id="coaba2" name="coaba2" style="height: 20%;" required="required" onclick="pilcoaba()">
               <option value="">-----Pilih COAPB-----</option>
               <?php
               foreach ($coa as $code) {
@@ -246,11 +277,28 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
               }
               ?>
             </select>
+			<input type="text" class="form-control" id="namacoaba2" name="namacoaba2">
+			</div>
+		  <!-- end of add-on -->
+		  <!--add-on by ysf (2019-08-06)-->
+			<div class="form-group">
+            <label for="coaDA class="col-form-label">Chart Of Account DENDA</label><br>
+            <select type="text" class="form-control" id="coada2" name="coada2" style="height: 20%;" required="required" onclick="pilcoada()>
+              <option value="">-----Pilih COADA-----</option>
+              <?php
+              foreach ($coa as $code) {
+                ?>
+                <option value="<?php echo $code->vcCOACode?>"><?php echo $code->vcCOAName?></option>
+                <?php
+              }
+              ?>
+            </select>
+			<input type="text" class="form-control" id="namacoada2" name="namacoada2">
 			</div>
 		  <!-- end of add-on -->
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Status</label><br>
-            <select type="text" class="form-control" id="tampil" name="tampil" style="height: 20%;" required="required">
+            <select type="text" class="form-control" id="tampil2" name="tampil2" style="height: 20%;" required="required">
               <option value="">-----Pilih Status-----</option>
               <option value="Y">Ya</option>
               <option value="T">Tidak</option>
@@ -288,4 +336,46 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
       ]
     } );
   } );
+function pilcoapb(){
+	 var ysf="";
+	 var ddi="";
+	 ysf=document.getElementById('coapb2').selectedIndex;
+	 ddi=document.getElementById('coapb2').options;
+	 document.getElementById('namacoapb2').value=ddi[ysf].text;
+ }
+ function pilcoaba(){
+	 var ysf="";
+	 var ddi="";
+	 ysf=document.getElementById('coaba2').selectedIndex;
+	 ddi=document.getElementById('coaba2').options;
+	 document.getElementById('namacoaba2').value=ddi[ysf].text;
+ }
+ function pilcoada(){
+	 var ysf="";
+	 var ddi="";
+	 ysf=document.getElementById('coada2').selectedIndex;
+	 ddi=document.getElementById('coada2').options;
+	 document.getElementById('namacoada2').value=ddi[ysf].text;
+ }
+ function editpilcoapb(){
+	 var ysf="";
+	 var ddi="";
+	 ysf=document.getElementById('coapb').selectedIndex;
+	 ddi=document.getElementById('coapb').options;
+	 document.getElementById('namacoapb').value=ddi[ysf].text;
+ }
+ function editpilcoaba(){
+	 var ysf="";
+	 var ddi="";
+	 ysf=document.getElementById('coaba').selectedIndex;
+	 ddi=document.getElementById('coaba').options;
+	 document.getElementById('namacoaba').value=ddi[ysf].text;
+ }
+ function editpilcoada(){
+	 var ysf="";
+	 var ddi="";
+	 ysf=document.getElementById('coada').selectedIndex;
+	 ddi=document.getElementById('coada').options;
+	 document.getElementById('namacoada').value=ddi[ysf].text;
+ }
 </script>

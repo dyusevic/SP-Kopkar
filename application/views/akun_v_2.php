@@ -137,7 +137,7 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
                 <div class="modal-body">
                   <div class="form-group">
                     <label for="recipient-name" class="col-form-label">Kode</label>
-                    <input type="text" class="form-control" id="vcCOACode" name="vcCOACode" style="height: 20%;" required="required" value="<?php echo $akun->vcCOACode?>" readonly>
+                    <input type="text" class="form-control-coa" id="vcCOACode" name="vcCOACode" style="height: 20%;" required="required" value="<?php echo $akun->vcCOACode?>" readonly>
                   </div>
                   <div class="form-group">
                     <label for="recipient-name" class="col-form-label">Nama</label>
@@ -367,7 +367,7 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
         <div class="modal-body">
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Kode</label>
-            <input type="text" class="form-control" id="vcCOACode" name="vcCOACode" style="height: 20%;" required="required">
+            <input type="text" class="form-control-coa" id="kodecoa" name="kodecoa" style="height: 20%;" required="required" data-mask="99.99.99.999" placeholder="__.__.__.___">
           </div>
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Nama</label>
@@ -387,7 +387,7 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
             <div class="col-sm-3">
               <div class="form-group" style="margin-left:15px;">
                 <label for="recipient-name" class="col-form-label">Level</label><br>
-                <select type="text" class="form-control" style="width: 140%;" id="itCOALevel" name="itCOALevel" required="required">
+                <select type="text" class="form-control-select" style="width: 140%;" id="itCOALevel" name="itCOALevel" required="required">
                   <option value="">-----Pilih level-----</option>
                   <option value="0">Level 0</option>
                   <option value="1">Level 1</option>
@@ -502,18 +502,49 @@ $txt_tanggal .= ' - ' . $tanggal_arr[1];
 <script src="<?php echo base_url(); ?>assets/asset/javascript/datatable/js/vfs_fonts.js"  type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/asset/javascript/datatable/js/buttons.html5.min.js"  type="text/javascript" ></script>
 <script src="<?php echo base_url(); ?>assets/asset/javascript/datatable/js/buttons.print.min.js"  type="text/javascript" ></script>
-
+<script src="<?php echo base_url(); ?>assets/jquery_ui/jquery-ysf.js" type="text/javascript"></script>
 
 
 
 <script>
-  $(document).ready(function() {
-    $('#example').DataTable( {
-      'ordering' : false,
-      dom: 'Bfrtip',
-      buttons: [
-      'copy', 'csv', 'excel', 'pdf', 'print'
-      ]
-    } );
-  } );
+$(document).ready(function(){
+	$('#example').DataTable({
+		'ordering' : false,
+		dom: 'Bfrtip',
+		buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+	});
+	//$('#vcCOACode').mask('99.99.99.999');
+	$.fn.ceklevel=function(){
+		//var txt=document.getElementById('vcCOACode').value;
+		var txt=$('#kodecoa').val();
+		var pjtxt=txt.length-1;
+		var lvl=0;
+		if(pjtxt>=0 && pjtxt<=2){
+			lvl=0;
+		}else{
+			if(pjtxt>2 && pjtxt<=5){
+				lvl=1;
+			}else{
+				if(pjtxt>5 && pjtxt<=8){
+					lvl=2;
+				}else{
+					lvl=3
+				}
+			}
+		}
+		$('.form-control-select option[value='+lvl+']').attr('selected','selected');
+		lvl=undefined;
+		lvl=null;
+		delete window.lvl;
+		txt=undefined;
+		txt=null;
+		delete window.txt;
+		pjtxt=undefined;
+		pjtxt=null;
+		delete window.pjtxt;
+	}
+	$('.form-control-coa').keyup(function(){
+		$.fn.ceklevel();
+	});
+});
 </script>

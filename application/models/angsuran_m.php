@@ -155,13 +155,44 @@ class Angsuran_m extends CI_Model {
 				$tagihan = $pinjam->lama_angsuran * $pinjam->ags_per_bulan;
 				$denda = $this->general_m->get_semua_denda_by_pinjaman($master_id);
 				$total_tagihan = $tagihan + $denda;
-				if($total_tagihan <= 0) {
-					$status = 'Lunas';} 
-					else {
-						$status = 'Belum';}
-						$data = array('lunas' => $status);
-						$this->db->where('id', $master_id);
-						$this->db->update('tbl_pinjaman_h', $data);
-						return TRUE;
-					}
+				if($total_tagihan <= 0){
+					$status = 'Lunas';
+				}else{
+					$status = 'Belum';
 				}
+				$data = array('lunas' => $status);
+				$this->db->where('id', $master_id);
+				$this->db->update('tbl_pinjaman_h', $data);
+				return TRUE;
+			}
+	//add-on by:ysf (2019/07/10)
+	// ambil data header by id header
+	public function get_data_header($idAngsuran,$IDPinjaman){
+		$this->db->limit('1');
+		$this->db->where('id', $IDPinjaman);
+		$this->db->where('angsuran_ke', $idAngsuran);
+		return $this->db->get('tbl_pinjaman_d');
+	}
+	// ambil data ar header
+	public function get_data_coa($IDPinjaman){
+		$this->db->join('jns_pinjam C','C.id = H.jns_pinjam','LEFT');
+		$this->db->where('H.id', $IDPinjaman);
+		$this->db->order_by('H.id','DESC');
+		return $this->db->get('tbl_pinjaman_h H');
+	}
+	public function get_data_kas_by_id($idAngsuran){
+		$this->db->join('nama_kas_tbl K','K.id = H.kas_id','LEFT');
+		$this->db->where('H.id', $idAngsuran);
+		$this->db->order_by('H.id','DESC');
+		return $this->db->get('tbl_pinjaman_d H');
+	}
+	public function update_status_posting($idAngsuran) {
+		$this->db->where('id', $idAngsuran);
+		return $this->db->update('tbl_pinjaman_d',array('itPostBayar'=>'1'));
+	}
+	public function update_status_unposting($idAngsuran) {
+		$this->db->where('angsuran_ke', $idAngsuran);
+		return $this->db->update('tbl_pinjaman_d',array('itPostBayar'=>'0'));
+	}
+	//end of add-on
+}

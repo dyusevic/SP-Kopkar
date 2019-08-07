@@ -108,8 +108,16 @@ class Angsuran extends OperatorController {
 			$rows[$i]['kas_id'] = $r->kas_id;
 			$rows[$i]['ket'] = $r->keterangan;
 			$rows[$i]['user'] = $r->user_name;
-			$rows[$i]['nota'] = '<p></p><p>
-			<a href="'.site_url('cetak_angsuran').'/cetak/' . $r->id . '"  title="Cetak Bukti Transaksi" target="_blank"> <i class="glyphicon glyphicon-print"></i> Nota </a></p>';
+			$rows[$i]['nota'] = '<p></p><p><a href="'.site_url('cetak_angsuran').'/cetak/' . $r->id . '"  title="Cetak Bukti Transaksi" target="_blank"> <i class="glyphicon glyphicon-print"></i> Nota </a></p>';
+			//$rows[$i]['posting'] = '<p></p><p><a href="'.site_url('angsuran').'/posting/' . $r->id . '"  title="Posting Transaksi" target="_blank"> <i class="fa fa-repeat"></i> Posting </a></p>';
+			if($r->itPostBayar==0){
+				//$rows[$i]['nota'] = '<p></p><p><a href="'.site_url('cetak_angsuran').'/cetak/' . $r->id . '"  title="Cetak Bukti Transaksi" target="_blank"> <i class="glyphicon glyphicon-print"></i> Nota </a></p>';
+				$rows[$i]['posting'] = '<p></p><p><a href="'.site_url('angsuran').'/posting/' . $r->id."/".$r->pinjam_id . '"  title="Posting Transaksi"> <i class="fa fa-repeat"></i> Posting </a></p>';
+			}else{
+				//$rows[$i]['nota'] = '<p></p><p><a href="'.site_url('cetak_angsuran').'/cetak/' . $r->id . '"  title="Cetak Bukti Transaksi" target="_blank"> <i class="glyphicon glyphicon-print"></i> Nota </a></p>';
+				$rows[$i]['posting'] = '<p></p><p><a href="'.site_url('angsuran').'/unposting/' . $r->id."/".$r->pinjam_id . '"  title="unPosting Transaksi"> <i class="fa fa-undo"></i> Un-Posting </a></p>';
+			}
+			
 			$i++;
 		}
 		//keys total & rows wajib bagi jEasyUI
@@ -301,5 +309,107 @@ class Angsuran extends OperatorController {
 		}
 		echo json_encode($out);
 		exit();
+	}
+	function testPosting($idAngsuran,$IDPinjaman){
+		echo "id angsuran: ".$idAngsuran;
+		echo "Id pinjaman: ".$IDPinjaman;
+	}
+	function posting($idAngsuran,$IDPinjaman){
+		$data = array(
+			'itPostBayar' => '1',
+		);
+		// ambil data angsuran dan coa
+		$data_header 	= $this->angsuran_m->get_data_header($idAngsuran,$IDPinjaman)->row();
+		//$data_coa 		= $this->pinjaman_m->get_data_coa($IDPinjaman->vcCOACode)->result();
+		$data_coa 		= $this->angsuran_m->get_data_coa($IDPinjaman)->row();
+		$data_kas 		= $this->angsuran_m->get_data_kas_by_id($idAngsuran)->row();
+		$this->db->trans_start();
+		$jumlahdebet=$data_header->jumlah_bayar+($data_header->jumlah_bayar*(2/100))+$data_header->bayar_jasa_pinjaman+$data_header->denda_rp;
+		$bungapinjaman=$data_header->jumlah_bayar*(2/100);
+		$biayaadmin=$data_header->bayar_jasa_pinjaman;
+		// data debet
+		$insert_header = array(
+			'vcIDJournal' 		=> $data_header->pinjam_id,
+			'dtJournal'			=> date("Y-m-d H:i:s"),
+			'vcCOAJournal'		=> $data_coa->vcCOACode,
+			'cuJournalDebet' 	=> $jumlahdebet,
+			'vcJournalDesc'		=> $data_coa->jns_pinjam,
+			'itPostJournal'		=> '1',
+			'vcUserID'			=> 'Admin'
+		);
+		$this->db->insert('tbl_journal', $insert_header);
+		// data kredit (BUNGA PINJAMAN)
+		$insert_header = array(
+			'vcIDJournal' 		=> $data_header->pinjam_id,
+			'dtJournal'			=> date("Y-m-d H:i:s"),
+			'vcCOAJournal'		=> $data_coa->COAPB,
+			'cuJournalCredit' 	=> $bungapinjaman,
+			'vcJournalDesc'		=> "Bunga Pinjaman",
+			'itPostJournal'		=> '1',
+			'vcUserID'			=> 'Admin'
+		);
+		$this->db->insert('tbl_journal', $insert_header);
+		// data kredit (BIAYA ADMIN)
+		$insert_header = array(
+			'vcIDJournal' 		=> $data_header->pinjam_id,
+			'dtJournal'			=> date("Y-m-d H:i:s"),
+			'vcCOAJournal'		=> $data_coa->COABA,
+			'cuJournalCredit' 	=> $biayaadmin,
+			'vcJournalDesc'		=> "Biaya Admin",
+			'itPostJournal'		=> '1',
+			'vcUserID'			=> 'Admin'
+		);
+		$this->db->insert('tbl_journal', $insert_header);
+		// data kredit (KAS)
+		$insert_header = array(
+			'vcIDJournal' 		=> $data_header->pinjam_id,
+			'dtJournal'			=> date("Y-m-d H:i:s"),
+			'vcCOAJournal'		=> $data_kas->vcCOACode,
+			'cuJournalCredit' 	=> $data_header->jumlah_bayar,
+			'vcJournalDesc'		=> $data_kas->nama,
+			'itPostJournal'		=> '1',
+			'vcUserID'			=> 'Admin'
+		);
+		// data kredit (DENDA)
+		$insert_header = array(
+			'vcIDJournal' 		=> $data_header->pinjam_id,
+			'dtJournal'			=> date("Y-m-d H:i:s"),
+			'vcCOAJournal'		=> $data_kas->COADA,
+			'cuJournalCredit' 	=> $data_header->denda_rp,
+			'vcJournalDesc'		=> $data_kas->nama,
+			'itPostJournal'		=> '1',
+			'vcUserID'			=> 'Admin'
+		);
+		$this->db->insert('tbl_journal', $insert_header);
+		// update tbl_pinjaman_d
+		$this->angsuran_m->update_status_posting($idAngsuran);
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$this->session->set_flashdata('error','Mohon maaf data gagal diposting.');
+			redirect_back();
+			return FALSE;
+		} else {
+			$this->db->trans_complete();
+			$this->session->set_flashdata('sukses','Selamat, Data berhasil diposting.');
+			redirect_back();
+			return TRUE;
+		}
+	}
+	public function unposting($IDPinjaman){
+		$this->db->trans_start();
+		// TRANSACTIONAL DB START
+		$this->db->delete('tbl_journal', array('vcIDJournal' => $IDPinjaman));
+		$this->angsuran_m->update_status_unposting($IDPinjaman);
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$this->session->set_flashdata('error','Mohon maaf data gagal diposting.');
+			redirect_back();
+			return FALSE;
+		} else {
+			$this->db->trans_complete();
+			$this->session->set_flashdata('sukses','Selamat, Data berhasil diposting.');
+			redirect_back();
+			return TRUE;
+		}
 	}
 }

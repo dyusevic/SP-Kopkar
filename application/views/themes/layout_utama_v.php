@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title><?php echo $judul_browser;?> - KOPKAR</title>
-	<link rel="shortcut icon" href="<?php echo base_url().'assets/asset/images/samudera icon.png'; ?>" type="image/x-icon" />
+	<link rel="shortcut icon" href="<?php echo base_url().'assets/asset/images/logoarnawakopkar.png'; ?>" type="image/x-icon" />
 	<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 	<!-- bootstrap 3.0.2 -->
 	<link href="<?php echo base_url(); ?>assets/theme_admin/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -54,7 +54,7 @@
 	<header class="header">
 		<a href="<?php echo site_url();?>" class="logo">
 			<!-- Add the class icon to your logo image or logo icon to add the margining -->
-			 <div style="text-align:center;"><img width="185" height="40" src="<?php echo base_url().'assets/asset/images/samudera_logo1.png'; ?>"></div>
+			 <div style="text-align:center;"><img width="185" height="40" src="<?php echo base_url().'assets/asset/images/logoarnawakopkar.png'; ?>"></div>
 		</a>
 		<!-- Header Navbar: style can be found in header.less -->
 		<nav class="navbar navbar-static-top" role="navigation">

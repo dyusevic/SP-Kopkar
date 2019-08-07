@@ -20,7 +20,8 @@ class Akun extends AdminController {
 	}
 
 	public function post_coa(){
-		$this->form_validation->set_rules('vcCOACode', 'vcCOACode', 'required');
+		//$this->form_validation->set_rules('vcCOACode', 'vcCOACode', 'required');
+		$this->form_validation->set_rules('kodecoa', 'kodecoa', 'required');
 		$this->form_validation->set_rules('vcCOAName', 'vcCOAName', 'required');
 		$this->form_validation->set_rules('vcGroupCode', 'vcGroupCode', 'required');
 		$this->form_validation->set_rules('itCOAType','itCOAType', 'required');
@@ -39,7 +40,8 @@ class Akun extends AdminController {
 			redirect_back();
 		}else{
 			$data = array(
-				'vcCOACode' 		=> $this->input->post('vcCOACode'),
+				//'vcCOACode' 		=> $this->input->post('vcCOACode'),
+				'vcCOACode' 		=> $this->input->post('kodecoa'),
 				'vcCOAName' 		=> $this->input->post('vcCOAName'),
 				'vcGroupCode' 		=> $this->input->post('vcGroupCode'),
 				'itCOAType' 		=> $this->input->post('itCOAType'),
